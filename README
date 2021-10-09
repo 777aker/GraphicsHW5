@@ -1,18 +1,24 @@
-hw4: Projections
+hw5: Light
 
 Kelley Kelley
 CSCI 5229 Fall 2021
 
-Program for different projection/camera types
-One orthogonal, one perspective, one first person
+Program for lighting, builds upon
+HW4 and uses a lot from it
+Really actually just added lighting
+to HW4
 
-Time Spent: um...2 hours...idk, I just took hw3 and added the projections
-had some extra time so added bounds so you can't walk outside the area or in the fence
+Time Spent: 
 
-Key Bindings:
+Key Bindings: (they're getting pretty lengthy)
+Space: rerandomize everything
+
+light controls:
+NONE YET
+
+display controls:
 Arrow keys: move display around
 Pageup/Pagedwn: zoom in/out
-Space: rerandomize everything
 p: change perspective
 f/F: change FOV
 WASD: move around in first person
