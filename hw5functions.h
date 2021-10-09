@@ -37,4 +37,7 @@ void Vertexflat(double theta, double dis);
 // copied from ex13
 void ball(double x, double y, double z, double r);
 
+// this function calculates and sets normals
+void doanormal(double one[3], double two[3], double three[3]);
+
 #endif

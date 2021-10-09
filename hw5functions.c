@@ -53,12 +53,11 @@ void save_grass() {
       struct grass_pos pos;
       pos.x = (rand()%((int)dm*20)-dm/.1)/10.0;
       pos.y = (rand()%((int)dm*20)-dm/.1)/10.0;
-      pos.rotation = rand()%360;
+      pos.rotation = rand()%120;
 
       grasses[i] = pos;
    }
 }
-
 
 // draw some GRAAAASSSSSSS
 void grass() {
@@ -90,43 +89,34 @@ void grass() {
       glRotatef(rand()%30/5.0, 0, 0, 1);
       glRotatef(rand()%30/5.0, 1, 0, 0);
 
-      glScaled(5, 2, 2);
+      //glScalef(5, 5, 5);
       // now just draw some grass
       Color(85, 234, 16);
 
       glBegin(GL_QUADS);
-      glNormal3f(+1, 0, 0);
+      glNormal3f(0, +1, -.25);
       glVertex3f(-.1, 0, 0);
       glVertex3f(.1, 0, 0);
       glVertex3f(.1, .5, 0);
       glVertex3f(-.1, .5, 0);
       glEnd();
 
-      /*
       //glRotatef(1, 1, 0, 0);
       glBegin(GL_TRIANGLES);
-      glNormal3f(0, 0, -1);
-      glVertex3f(.1, .5, 0);
-      glVertex3f(0, 1, .1);
-      glVertex3f(-.1, .5, 0);
-
-      glNormal3f(0, 0, +1);
       glVertex3f(.1, .5, 0);
       glVertex3f(0, 1, .1);
       glVertex3f(-.1, .5, 0);
       glEnd();
-      */
 
-      /*
       glColor3f(0, 0, 0);
-      glLineWidth(3);
+      glLineWidth(1);
       glBegin(GL_LINE_STRIP);
       glVertex3f(-.1, 0, 0);
       glVertex3f(-.1, .5, 0);
       glVertex3f(0, 1, .1);
       glVertex3f(.1, .5, 0);
       glVertex3f(.1, 0, 0);
-      glEnd();*/
+      glEnd();
 
       glPopMatrix();
    }
@@ -139,12 +129,20 @@ void grass() {
 void picket() {
    glPushMatrix();
    glEnable(GL_CULL_FACE);
+
+   float white[]   = {1.0,1.0,1.0,1.0};
+   float Emission[] = {0.0,0.0,0.01*emission,1.0};
+   glColor3f(1,1,1);
+   glMaterialf(GL_FRONT,GL_SHININESS,shny/5);
+   glMaterialfv(GL_FRONT,GL_SPECULAR,white);
+   glMaterialfv(GL_FRONT,GL_EMISSION,Emission);
+
    glTranslatef(0, gr, 0);
    glColor3f(1, 1, 1);
    glBegin(GL_QUADS);
 
    // front of the fence
-
+   glNormal3f(+1, 0, 0);
    glVertex3f(9.5, 1, -9.5);
    glVertex3f(9.5, 1.5, -9.5);
    glVertex3f(9.5, 1.5, 9.5);
@@ -155,6 +153,7 @@ void picket() {
    glVertex3f(9.5, 2.5, 9.5);
    glVertex3f(9.5, 2, 9.5);
    
+   glNormal3f(0, 0, -1);
    glVertex3f(-9.5, 2, -9.5);
    glVertex3f(-9.5, 2.5, -9.5);
    glVertex3f(9.5, 2.5, -9.5);
@@ -165,6 +164,7 @@ void picket() {
    glVertex3f(9.5, 1.5, -9.5);
    glVertex3f(9.5, 1, -9.5);
 
+   glNormal3f(0, 0, +1);
    glVertex3f(9.5, 2, 9.5);
    glVertex3f(9.5, 2.5, 9.5);
    glVertex3f(-9.5, 2.5, 9.5);
@@ -175,6 +175,7 @@ void picket() {
    glVertex3f(-9.5, 1.5, 9.5);
    glVertex3f(-9.5, 1, 9.5);
 
+   glNormal3f(-1, 0, 0);
    glVertex3f(-9.5, 2, 9.5);
    glVertex3f(-9.5, 2.5, 9.5);
    glVertex3f(-9.5, 2.5, -9.5);
@@ -187,6 +188,7 @@ void picket() {
 
    // back of the fence
 
+   glNormal3f(+1, 0, 0);
    glVertex3f(-9, 1, -9);
    glVertex3f(-9, 1.5, -9);
    glVertex3f(-9, 1.5, 9);
@@ -197,6 +199,7 @@ void picket() {
    glVertex3f(-9, 2.5, 9);
    glVertex3f(-9, 2, 9);
 
+   glNormal3f(-1, 0, 0);
    glVertex3f(9, 1, 9);
    glVertex3f(9, 1.5, 9);
    glVertex3f(9, 1.5, -9);
@@ -207,6 +210,7 @@ void picket() {
    glVertex3f(9, 2.5, -9);
    glVertex3f(9, 2, -9);
    
+   glNormal3f(0, 0, +1);
    glVertex3f(9, 2, -9);
    glVertex3f(9, 2.5, -9);
    glVertex3f(-9, 2.5, -9);
@@ -217,6 +221,7 @@ void picket() {
    glVertex3f(-9, 1.5, -9);
    glVertex3f(-9, 1, -9);
    
+   glNormal3f(0, 0, -1);
    glVertex3f(-9, 2, 9);
    glVertex3f(-9, 2.5, 9);
    glVertex3f(9, 2.5, 9);
@@ -229,6 +234,7 @@ void picket() {
 
    // top of the fence
 
+   glNormal3f(0, 1, 0);
    glVertex3f(-9, 1.5, 9);
    glVertex3f(-9.5, 1.5, 9.5);
    glVertex3f(9.5, 1.5, 9.5);
@@ -271,6 +277,7 @@ void picket() {
 
    // bottom of the fence
 
+   glNormal3f(0, -1, 0);
    glVertex3f(9, 1, 9);
    glVertex3f(9.5, 1, 9.5);
    glVertex3f(-9.5, 1, 9.5);
@@ -455,40 +462,95 @@ void fence_line() {
    }
 }
 
+// so I could, go around, figuring out normals
+// /where even all these things are
+// honestly too many objects for me to even
+// figure out what is where.
+// or, I could, just calculate surface normals 
+// using math, which sounds much easier
+// linear algebra is great
+// actually, trees are generated randomly so normals aren't even consitent
+void doanormal(double one[3], double two[3], double three[3]) {
+   // this takes in 3 points then
+   // sets the vector to point out
+   // first, make a vector
+   // this is one of our edges
+   // using 0,1,2 is confusing
+   int x = 0, y = 1, z = 2;
+   double firstvector[3];
+   firstvector[x] = one[x] - two[x];
+   firstvector[y] = one[y] - two[y];
+   firstvector[z] = one[z] - two[z];
+   // then, make a vector
+   // another of our edges
+   // did three - two so that both vectors point
+   // away from the point two
+   // but not sure it actually matters
+   double secondvector[3];
+   secondvector[x] = three[x] - two[x];
+   secondvector[y] = three[y] - two[y];
+   secondvector[z] = three[z] - two[z];
+   // then do a cross product
+   double normal[3];
+   normal[x] = firstvector[y]*secondvector[z] - firstvector[z]*secondvector[y];
+   normal[y] = firstvector[z]*secondvector[x] - firstvector[x]*secondvector[z];
+   normal[z] = firstvector[x]*secondvector[y] - firstvector[y]*secondvector[x];
+   // then, set normal
+   // mmm, math makes things so much easier
+   glNormal3f(normal[x], normal[y], normal[z]);
+}
+
 void fence_post() {
    glColor3f(1, 1, 1);
    glBegin(GL_QUADS);
 
+   // nice thing about having working face culling,
+   // you can throw your three points into your normal 
+   // setter and it'll just work since
+   // your vectors are all clockwise/counterclockwise
+   // ie: the normal will point same way for all of them
+
+   // bottom
+   glNormal3f(0, -1, 0);
    glVertex3f(-.5, 0, .25);
    glVertex3f(-.5, 0, -.25);
    glVertex3f(.5, 0, -.25);
    glVertex3f(.5, 0, .25);
 
+   // sides
+   glNormal3f(0, 0, +1);
    glVertex3f(-.5, 0, .25);
    glVertex3f(.5, 0, .25);
    glVertex3f(.5, 3, .25);
    glVertex3f(-.5, 3, .25);
 
+   glNormal3f(+1, 0, 0);
    glVertex3f(.5, 0, .25);
    glVertex3f(.5, 0, -.25);
    glVertex3f(.5, 3, -.25);
    glVertex3f(.5, 3, .25);
 
+   glNormal3f(0, 0, -1);
    glVertex3f(.5, 0, -.25);
    glVertex3f(-.5, 0, -.25);
    glVertex3f(-.5, 3, -.25);
    glVertex3f(.5, 3, -.25);
 
+   glNormal3f(-1, 0, 0);
    glVertex3f(-.5, 0, -.25);
    glVertex3f(-.5, 0, .25);
    glVertex3f(-.5, 3, .25);
    glVertex3f(-.5, 3, -.25);
 
+   // top pointer part
+   glNormal3f(-.5, +.5, 0);
    glVertex3f(-.5, 3, -.25);
    glVertex3f(-.5, 3, .25);
    glVertex3f(0, 4, .25);
    glVertex3f(0, 4, -.25);
 
+   // top pointer part
+   glNormal3f(+.5, +.5, 0);
    glVertex3f(0, 4, -.25);
    glVertex3f(0, 4, .25);
    glVertex3f(.5, 3, .25);
@@ -498,10 +560,14 @@ void fence_post() {
 
    glBegin(GL_TRIANGLES);
 
+   // fill in the top pointer part
+
+   glNormal3f(0, 0, +1);
    glVertex3f(-.5, 3, .25);
    glVertex3f(.5, 3, .25);
    glVertex3f(0, 4, .25);
 
+   glNormal3f(0, 0, -1);
    glVertex3f(0, 4, -.25);
    glVertex3f(.5, 3, -.25);
    glVertex3f(-.5, 3, -.25);

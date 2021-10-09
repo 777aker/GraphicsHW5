@@ -145,6 +145,10 @@ void display() {
 
 	// light switch
 	if(light) {
+		// copied this from ex13 because that's a lot
+		// of very specific things and functions to get this to work
+		// oh, but I did add an intensity variable so I can make the
+		// light brighter or darker
 		glDisable(GL_CULL_FACE);
 		//  Translate intensity to color vectors
       float Ambient[]   = {lf*ambient ,lf*ambient ,lf*ambient ,1.0};
@@ -180,7 +184,7 @@ void display() {
 	// draw the grass
 	// it's flat so don't do face
 	// culling on it
-	grass();
+	//grass();
 	glEnable(GL_CULL_FACE);
 
 	// draw, the grouuunndddd
@@ -195,6 +199,7 @@ void display() {
    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
 
 	Color(15, 86, 7);
+	/*
 	glBegin(GL_QUADS);
 	// ground was too big lighting kinda weird so splitting into 4
 	// a little weird when close but not too bad
@@ -221,6 +226,7 @@ void display() {
 	glVertex3f(0, ground, -50);
 	
 	glEnd();
+	*/
 	glEnable(GL_CULL_FACE);
 
 	// I want a fence, for, idk, protect my property?
@@ -232,12 +238,13 @@ void display() {
 	// but whatever, makes it much more dramatic and cool
 	// so uh, finally, the main subject of this composition
 	// a tree
-	/*
+	
 	maintree = 1;
 	int first = 1;
 	tree(first);
 	maintree = 0;
 	
+	/*
 	// trees along the diagonal
 	first++;
 	glPushMatrix();
@@ -673,18 +680,33 @@ void branch(struct point base[4], double dy, int first, double dx, double dz, in
 	// make a new base that will be where this branch left off
 	// to pass to the next branches
 	struct point newbase[4];
-	// draw the branch
-	glBegin(GL_QUAD_STRIP);
+	// draw the branchs
+	// actually first creat our base
+	// then draw our four quads
 	// loop through and draw our quads
-	for(i = 4; i >= 0; i--) {
-		glVertex3f(base[i%4].x, base[i%4].y, base[i%4].z);
+	for(i = 0; i < 4; i++) {
+		//glVertex3f(base[i%4].x, base[i%4].y, base[i%4].z);
 		
 		// the top of this branch which will be our next base
 		newbase[i%4].x = (base[i%4].x+dx);
 		newbase[i%4].y = (base[i%4].y+dy+(dy*randoms[(int)(dy*first)%100]/50.0)/2);
 		newbase[i%4].z = (base[i%4].z+dz);
 
-		glVertex3f(newbase[i%4].x, newbase[i%4].y, newbase[i%4].z);
+		//glVertex3f(newbase[i%4].x, newbase[i%4].y, newbase[i%4].z);
+	}
+	glBegin(GL_QUADS);
+	
+	for(i = 0; i < 4; i++) {
+		
+		double one[] = {base[i%4].x, base[i%4].y, base[i%4].z};
+		double two[] = {newbase[i%4].x, newbase[i%4].y, newbase[i%4].z};
+		double three[] = {newbase[(i+1)%4].x, newbase[(i+1)%4].y, newbase[(i+1)%4].z};
+		doanormal(one, two, three);
+
+		glVertex3f(base[(i+1)%4].x, base[(i+1)%4].y, base[(i+1)%4].z);
+		glVertex3f(three[0], three[1], three[2]);
+		glVertex3f(two[0], two[1], two[2]);
+		glVertex3f(one[0], one[1], one[2]);
 	}
 	glEnd();
 
@@ -745,17 +767,35 @@ void tree(int firstrand) {
 	glScalef(.5, .5, .5);
 	// I guess we'll start with the trunk first
 	Color(79, 28, 3);
+
+	float black[]  = {0.0,0.0,0.0,1.0};
+   float white[]  = {1.0,1.0,1.0,1.0};
+   glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+   glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+   glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny/20);
+
 	int i;
+	glNormal3f(0, -1, 0);
 	glBegin(GL_POLYGON);
 	for(i = 360; i >= 0; i -= 60)
 		Vertex(i, 0);
 	glEnd();
-	glBegin(GL_QUAD_STRIP);
+
+
+	glBegin(GL_QUADS);
 	for(i = 360; i >= 0; i -= 60) {
+		double one[] = {Sin(i), 0, Cos(i)};
+		double two[] = {Sin(i), 10, Cos(i)};
+		double three[] = {Sin(i-60), 10, Cos(i-60)};
+		//double four[] = {Sin(i-60), 0, Cos(i-60)};
+		doanormal(three, two, one);
 		Vertexflat(i, 0);
 		Vertexflat(i, 10);
+		Vertexflat(i-60, 10);
+		Vertexflat(i-60, 0);
 	}
 	glEnd();
+
 	// now some branches?
 	// how should I do this?
 	// I decided recursion is the best way
@@ -799,32 +839,28 @@ void tree(int firstrand) {
 	glPopMatrix();
 }
 
+typedef struct {float x,y,z;} vtx;
+typedef struct {int A,B,C;} tri;
+
 static void icosahedron1(float x,float y,float z,float s,float th) {
    //  Vertex index list
-   const int N=60;
-   const unsigned char index[] =
-      {
-       2, 1, 0,    3, 2, 0,    4, 3, 0,    5, 4, 0,    1, 5, 0,
-      11, 6, 7,   11, 7, 8,   11, 8, 9,   11, 9,10,   11,10, 6,
-       1, 2, 6,    2, 3, 7,    3, 4, 8,    4, 5, 9,    5, 1,10,
-       2, 7, 6,    3, 8, 7,    4, 9, 8,    5,10, 9,    1, 6,10,
-      };
-   //  Vertex coordinates
-   const float xyz[] =
-      {
-       0.000, 0.000, 1.000,
-       0.894, 0.000, 0.447,
-       0.276, 0.851, 0.447,
-      -0.724, 0.526, 0.447,
-      -0.724,-0.526, 0.447,
-       0.276,-0.851, 0.447,
-       0.724, 0.526,-0.447,
-      -0.276, 0.851,-0.447,
-      -0.894, 0.000,-0.447,
-      -0.276,-0.851,-0.447,
-       0.724,-0.526,-0.447,
-       0.000, 0.000,-1.000
-      };
+   const int N=20;
+	//  Triangle index list
+	const tri idx[] =
+	   {
+	      { 2, 1, 0}, { 3, 2, 0}, { 4, 3, 0}, { 5, 4, 0}, { 1, 5, 0},
+	      {11, 6, 7}, {11, 7, 8}, {11, 8, 9}, {11, 9,10}, {11,10, 6},
+	      { 1, 2, 6}, { 2, 3, 7}, { 3, 4, 8}, { 4, 5, 9}, { 5, 1,10},
+	      { 2, 7, 6}, { 3, 8, 7}, { 4, 9, 8}, { 5,10, 9}, { 1, 6,10}
+	   };
+	//  Vertex coordinates
+	const vtx xyz[] =
+   {
+      { 0.000, 0.000, 1.000}, { 0.894, 0.000, 0.447}, { 0.276, 0.851, 0.447},
+      {-0.724, 0.526, 0.447}, {-0.724,-0.526, 0.447}, { 0.276,-0.851, 0.447},
+      { 0.724, 0.526,-0.447}, {-0.276, 0.851,-0.447}, {-0.894, 0.000,-0.447},
+      {-0.276,-0.851,-0.447}, { 0.724,-0.526,-0.447}, { 0.000, 0.000,-1.000}
+   };
    //  Vertex colors
    // except, I want different colors bc trees so I'll be changing this
    
@@ -842,9 +878,13 @@ static void icosahedron1(float x,float y,float z,float s,float th) {
       0.0,1.0,0.2,
       0.0,1.0,0.2,
       0.0,1.0,0.2,
+      0.0,1.0,0.2,
       };
    float mainrgb[] =
       {
+      1.0,0.2,0.2,
+      1.0,0.2,0.2,
+      1.0,0.2,0.2,
       1.0,0.2,0.2,
       1.0,0.2,0.2,
       1.0,0.2,0.2,
@@ -879,9 +919,16 @@ static void icosahedron1(float x,float y,float z,float s,float th) {
       0.0,0.0,0.0,
       0.0,0.0,0.0,
       0.0,0.0,0.0,
+      0.0,0.0,0.0,
+      0.0,0.0,0.0,
+      0.0,0.0,0.0,
+      0.0,0.0,0.0,
+      0.0,0.0,0.0,
       };
    //  Define vertexes
    glDisable(GL_CULL_FACE);
+
+   /* taking this out cause color will have to be done differently now
    glVertexPointer(3,GL_FLOAT,0,xyz);
    glEnableClientState(GL_VERTEX_ARRAY);
    //  Define colors for each vertex
@@ -889,18 +936,63 @@ static void icosahedron1(float x,float y,float z,float s,float th) {
    	glColorPointer(3,GL_FLOAT,0,mainrgb);
    else
    	glColorPointer(3,GL_FLOAT,0,rgb);
-   glEnableClientState(GL_COLOR_ARRAY);
+   glEnableClientState(GL_COLOR_ARRAY);*/
    //  Draw icosahedron
    glPushMatrix();
+
+
+   float blackem[]  = {0.0,0.0,0.0,1.0};
+   float white[]  = {1.0,1.0,1.0,1.0};
+   glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,blackem);
+   glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+   glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+
    glTranslatef(x,y,z);
    glRotatef(th,1,0,0);
    glScalef(s,s,s);
-   glDrawElements(GL_TRIANGLES,N,GL_UNSIGNED_BYTE,index);
+   // so, we can't do this because need normals
+   // so I'm gonna steal how ex13 does it
+   // with some tweaks to coloring
+   //glDrawElements(GL_TRIANGLES,N,GL_UNSIGNED_BYTE,index);
+   for(int i=0;i<N;i++) {
+
+   	double one[] = {xyz[idx[i].A].x, xyz[idx[i].A].y, xyz[idx[i].A].z};
+   	double two[] = {xyz[idx[i].B].x, xyz[idx[i].B].y, xyz[idx[i].B].z};
+   	double three[] = {xyz[idx[i].C].x, xyz[idx[i].C].y, xyz[idx[i].C].z};
+   	
+   	doanormal(one, two, three);
+
+   	glBegin(GL_TRIANGLES);
+   	glColor3f(1, 1, 1);
+
+   	if(maintree == 1) {
+   		glColor3f(mainrgb[idx[i].A+0], mainrgb[idx[i].A+1], mainrgb[idx[i].A+2]);
+	   	glVertex3f(one[0], one[1], one[2]);
+
+	   	glColor3f(mainrgb[idx[i].A+0], mainrgb[idx[i].A+1], mainrgb[idx[i].A+2]);
+	   	glVertex3f(two[0], two[1], two[2]);
+
+	   	glColor3f(mainrgb[idx[i].A+0], mainrgb[idx[i].A+1], mainrgb[idx[i].A+2]);
+	   	glVertex3f(three[0], three[1], three[2]);
+   	} else {
+   		glColor3f(rgb[idx[i].A+0], rgb[idx[i].A+1], rgb[idx[i].A+2]);
+	   	glVertex3f(one[0], one[1], one[2]);
+
+	   	glColor3f(rgb[idx[i].B+0], rgb[idx[i].B+1], rgb[idx[i].B+2]);
+	   	glVertex3f(two[0], two[1], two[2]);
+
+	   	glColor3f(rgb[idx[i].C+0], rgb[idx[i].C+1], rgb[idx[i].C+2]);
+	   	glVertex3f(three[0], three[1], three[2]);
+   	}
+
+   	glEnd();
+   }
+
    //  draw some linnnzzzz
    glLineWidth(1);
    glColorPointer(3,GL_FLOAT,0,black);
    glEnableClientState(GL_COLOR_ARRAY);
-   glDrawElements(GL_LINE_STRIP,N,GL_UNSIGNED_BYTE,index);
+   glDrawElements(GL_LINE_STRIP,N,GL_UNSIGNED_BYTE,0);
    glEnable(GL_CULL_FACE);
    glPopMatrix();
    //  Disable vertex array
