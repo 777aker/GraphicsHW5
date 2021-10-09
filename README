@@ -14,7 +14,9 @@ Key Bindings: (they're getting pretty lengthy)
 Space: rerandomize everything
 
 light controls:
-NONE YET
+-/+: change light height
+</>: change light intensity
+0: stop light
 
 display controls:
 Arrow keys: move display around

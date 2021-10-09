@@ -25,4 +25,16 @@ void fence_line();
 void fence_post();
 void picket();
 
+// grass stuff
+void grass();
+void save_grass();
+
+// I'mma need vertex for this
+void Vertex(double theta, double dis);
+// vertex flat is vertex but for cylinder making
+void Vertexflat(double theta, double dis);
+
+// copied from ex13
+void ball(double x, double y, double z, double r);
+
 #endif
