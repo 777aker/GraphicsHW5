@@ -1,0 +1,19 @@
+hw4: Projections
+
+Kelley Kelley
+CSCI 5229 Fall 2021
+
+Program for different projection/camera types
+One orthogonal, one perspective, one first person
+
+Time Spent: um...2 hours...idk, I just took hw3 and added the projections
+had some extra time so added bounds so you can't walk outside the area or in the fence
+
+Key Bindings:
+Arrow keys: move display around
+Pageup/Pagedwn: zoom in/out
+Space: rerandomize everything
+p: change perspective
+f/F: change FOV
+WASD: move around in first person
+EQ: rotate in first person
