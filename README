@@ -7,8 +7,11 @@ Program for lighting, builds upon
 HW4 and uses a lot from it
 Really actually just added lighting
 to HW4
+The icosahedrons are kind of copied from ex13
+but also not because I wanted color to work
+a certain way which means I kind of had to deconstruct it a little
 
-Time Spent: 
+Time Spent: 9 hrs
 
 Key Bindings: (they're getting pretty lengthy)
 Space: rerandomize everything

@@ -3,14 +3,21 @@
 
 	Copy of HW4 but now there is...*lighting*
 
-	Key bindings:
+	Key Bindings: (they're getting pretty lengthy)
 	Space: rerandomize everything
-	Pageup/Pagedown change dim
-	Arrow keys change view
-	0 Resets view
-	ESC Exit
-	p change camera mode
-	f/F change FOV
+
+	light controls:
+	-/+: change light height
+	</>: change light intensity
+	0: stop light
+
+	display controls:
+	Arrow keys: move display around
+	Pageup/Pagedwn: zoom in/out
+	p: change perspective
+	f/F: change FOV
+	WASD: move around in first person
+	EQ: rotate in first person
 
 */
 // a bunch of includes
@@ -71,7 +78,7 @@ static void icosahedron1(float x, float y, float z, float s, float th);
 double randoms[50];
 
 // important variablessszzzz
-int th = 35; // um, view angle stuff
+int th = 15; // um, view angle stuff
 int ph = 35; // the other view angle rotation
 double dim = 50.0; // size of world / distance of camera?
 double asp = 1; // aspect ratio
@@ -155,7 +162,7 @@ void display() {
       float Diffuse[]   = {lf*diffuse ,lf*diffuse ,lf*diffuse ,1.0};
       float Specular[]  = {lf*specular,lf*specular,lf*specular,1.0};
       //  Light position
-      float Position[]  = {distance*Cos(zh),ylight,distance*Sin(zh),1.0};
+      float Position[]  = {ylight,distance*Cos(zh),distance*Sin(zh),1.0};
       //  Draw light position as ball (still no lighting here)
       glColor3f(1,1,1);
       ball(Position[0],Position[1],Position[2] , 5);
@@ -184,7 +191,7 @@ void display() {
 	// draw the grass
 	// it's flat so don't do face
 	// culling on it
-	//grass();
+	grass();
 	glEnable(GL_CULL_FACE);
 
 	// draw, the grouuunndddd
@@ -199,7 +206,7 @@ void display() {
    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
 
 	Color(15, 86, 7);
-	/*
+	
 	glBegin(GL_QUADS);
 	// ground was too big lighting kinda weird so splitting into 4
 	// a little weird when close but not too bad
@@ -226,13 +233,13 @@ void display() {
 	glVertex3f(0, ground, -50);
 	
 	glEnd();
-	*/
+	
 	glEnable(GL_CULL_FACE);
 
 	// I want a fence, for, idk, protect my property?
 	// from the nothingness?
-	//fence();
-	//picket();
+	fence();
+	picket();
 
 	// I probably spent way too long on decorations for the main thing
 	// but whatever, makes it much more dramatic and cool
@@ -244,7 +251,7 @@ void display() {
 	tree(first);
 	maintree = 0;
 	
-	/*
+	
 	// trees along the diagonal
 	first++;
 	glPushMatrix();
@@ -376,7 +383,6 @@ void display() {
 	glRotatef(randoms[first]*3, 0, 1, 0);
 	tree(first);
 	glPopMatrix();
-	*/
 
 	// Display keys
 	// Became too crowded turning them off
@@ -632,6 +638,7 @@ int main(int argc, char* argv[]) {
 	glutSpecialFunc(special);
 	// keys
 	glutKeyboardFunc(key);
+	dim+=10;
 	// start GLUT baby
 	glutMainLoop();
 	return 0;
@@ -769,9 +776,9 @@ void tree(int firstrand) {
 	Color(79, 28, 3);
 
 	float black[]  = {0.0,0.0,0.0,1.0};
-   float white[]  = {1.0,1.0,1.0,1.0};
+   float spec[]  = {1.0,6.0,1.0,1.0};
    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
-   glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+   glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec);
    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny/20);
 
 	int i;
@@ -966,22 +973,22 @@ static void icosahedron1(float x,float y,float z,float s,float th) {
    	glColor3f(1, 1, 1);
 
    	if(maintree == 1) {
-   		glColor3f(mainrgb[idx[i].A+0], mainrgb[idx[i].A+1], mainrgb[idx[i].A+2]);
+   		glColor3f(mainrgb[idx[i].A*3+0], mainrgb[idx[i].A*3+1], mainrgb[idx[i].A*3+2]);
 	   	glVertex3f(one[0], one[1], one[2]);
 
-	   	glColor3f(mainrgb[idx[i].A+0], mainrgb[idx[i].A+1], mainrgb[idx[i].A+2]);
+	   	glColor3f(mainrgb[idx[i].B*3+0], mainrgb[idx[i].B*3+1], mainrgb[idx[i].B*3+2]);
 	   	glVertex3f(two[0], two[1], two[2]);
 
-	   	glColor3f(mainrgb[idx[i].A+0], mainrgb[idx[i].A+1], mainrgb[idx[i].A+2]);
+	   	glColor3f(mainrgb[idx[i].C*3+0], mainrgb[idx[i].C*3+1], mainrgb[idx[i].C*3+2]);
 	   	glVertex3f(three[0], three[1], three[2]);
    	} else {
-   		glColor3f(rgb[idx[i].A+0], rgb[idx[i].A+1], rgb[idx[i].A+2]);
+   		glColor3f(rgb[idx[i].A*3+0], rgb[idx[i].A*3+1], rgb[idx[i].A*3+2]);
 	   	glVertex3f(one[0], one[1], one[2]);
 
-	   	glColor3f(rgb[idx[i].B+0], rgb[idx[i].B+1], rgb[idx[i].B+2]);
+	   	glColor3f(rgb[idx[i].B*3+0], rgb[idx[i].B*3+1], rgb[idx[i].B*3+2]);
 	   	glVertex3f(two[0], two[1], two[2]);
 
-	   	glColor3f(rgb[idx[i].C+0], rgb[idx[i].C+1], rgb[idx[i].C+2]);
+	   	glColor3f(rgb[idx[i].C*3+0], rgb[idx[i].C*3+1], rgb[idx[i].C*3+2]);
 	   	glVertex3f(three[0], three[1], three[2]);
    	}
 
